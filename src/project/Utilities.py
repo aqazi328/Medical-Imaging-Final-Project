@@ -3,16 +3,19 @@ import numpy as np
 
 
 def loadImage(image_path):
-    image = None
+    # image = None
+    image = cv2.imread(image_path)
     return image
 
 
 def loadMatrix(filename):
-    matrix = None
+    # matrix = None
+    matrix = np.loadtxt(filename)
     return matrix
 
 
 def saveImage(filename, image):
+    cv2.imwrite(filename, image)
     return True
 
 
@@ -22,7 +25,9 @@ def saveMatrix(filename, matrix):
 
 # map input image to values from 0 to 255"
 def normalizeImage(image):
-    normalized = None
+    # normalized = None
+    normalized = np.zeros((800, 800))
+    normalized = cv2.normalize(image, normalized, 0, 255, cv2.NORM_MINMAX)
     return normalized
 
 
