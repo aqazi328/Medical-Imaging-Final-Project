@@ -20,6 +20,7 @@ def saveImage(filename, image):
 
 
 def saveMatrix(filename, matrix):
+    np.save(filename, matrix)
     return True
 
 
@@ -33,7 +34,7 @@ def normalizeImage(image):
 
 # Remember: the DFT its a decomposition of signals
 #  To be able to save it as an image you must convert it.
-def writableDFT(dft_image):
+def writableDFT(dft_image):                                 # need to do
     converted = None
     return converted
 
@@ -47,12 +48,12 @@ def displayImage(image):
     cv2.destroyAllWindows()
 
 
-def getDFT(image):
+def getDFT(image):                                  # need to do
     return None
 
 
-# Confert from fft matrix to an image"
-def getImage(dft_img):
+# Convert from fft matrix to an image"
+def getImage(dft_img):                                 # need to do
     return None
 
 
@@ -61,7 +62,7 @@ def applyMask(image_dft, mask):
     return image_dft * mask
 
 
-def signalToNoise():
+def signalToNoise():                                 # need to do
     return False
 
 
