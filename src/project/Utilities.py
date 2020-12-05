@@ -27,15 +27,18 @@ def saveMatrix(filename, matrix):
 # map input image to values from 0 to 255"
 def normalizeImage(image):
     # normalized = None
-    normalized = np.zeros((800, 800))
+    normalized = np.zeros((800, 800))       # not sure if we have to do this or not
     normalized = cv2.normalize(image, normalized, 0, 255, cv2.NORM_MINMAX)
     return normalized
 
 
 # Remember: the DFT its a decomposition of signals
 #  To be able to save it as an image you must convert it.
-def writableDFT(dft_image):                                 # need to do
-    converted = None
+def writableDFT(dft_image):
+    # converted = None
+    f = np.fft.fft2(dft_image)
+    converted = np.fft.fftshift(f)      # do this to bring to center and make image easier to see
+    # converted = cv2.dft(np.float32(dft_image), flags=cv2.DFT_COMPLEX_OUTPUT)  # its either that^ or this
     return converted
 
 
@@ -48,13 +51,20 @@ def displayImage(image):
     cv2.destroyAllWindows()
 
 
-def getDFT(image):                                  # need to do
-    return None
+def getDFT(image):
+    dft_image = cv2.dft(np.float32(image), flags=cv2.DFT_COMPLEX_OUTPUT)   # what's the difference between this and writableDFT??
+    return dft_image
 
 
 # Convert from fft matrix to an image"
-def getImage(dft_img):                                 # need to do
-    return None
+def getImage(dft_img):                                 # pretty sure this is wrong; using this
+    rows, cols = dft_img.shape                     # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_transforms/py_fourier_transform/py_fourier_transform.html
+    crow, ccol = rows / 2, cols / 2
+    dft_img[crow - 30:crow + 30, ccol - 30:ccol + 30] = 0
+    f_ishift = np.fft.ifftshift(dft_img)
+    img_back = np.fft.ifft2(f_ishift)
+    img_back = np.abs(img_back)
+    return img_back
 
 
 # Both input values must be raw values"
