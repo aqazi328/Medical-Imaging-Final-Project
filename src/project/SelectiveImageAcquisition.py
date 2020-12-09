@@ -8,7 +8,8 @@ import cv2
 ##
 
 def cartesianPattern(mask_size, percent):
-    mask = None
+    mask = mask_size
+
     return mask
 
 

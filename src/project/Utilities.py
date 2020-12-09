@@ -4,7 +4,7 @@ import numpy as np
 
 def loadImage(image_path):
     # image = None
-    image = cv2.imread(image_path)
+    image = cv2.imread(image_path, 0)
     return image
 
 
@@ -52,28 +52,26 @@ def displayImage(image):
 
 
 def getDFT(image):
-    dft_image = cv2.dft(np.float32(image), flags=cv2.DFT_COMPLEX_OUTPUT)   # what's the difference between this and writableDFT??
-    return dft_image
-
+    f = np.fft.fft2(image)
+    dft_shift = np.fft.fftshift(f)
+    return dft_shift
 
 # Convert from fft matrix to an image"
-def getImage(dft_img):                                 # pretty sure this is wrong; using this
-    rows, cols = dft_img.shape                     # https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_transforms/py_fourier_transform/py_fourier_transform.html
-    crow, ccol = rows / 2, cols / 2
-    dft_img[crow - 30:crow + 30, ccol - 30:ccol + 30] = 0
-    f_ishift = np.fft.ifftshift(dft_img)
-    img_back = np.fft.ifft2(f_ishift)
-    img_back = np.abs(img_back)
+def getImage(dft_img):
+    img_back = np.fft.fft2(dft_img)
     return img_back
-
 
 # Both input values must be raw values"
 def applyMask(image_dft, mask):
     return image_dft * mask
 
 
-def signalToNoise():                                 # need to do
-    return False
+def signalToNoise(Arr, axis=0, ddof=0):                                 # need to do
+    # return False
+    Arr = np.asanyarray(Arr)
+    mean = Arr.mean(axis)
+    sd = Arr.std(axis=axis, ddof=ddof)
+    return np.where(sd == 0, 0, mean/sd)
 
 
 #[Provide] Use this function to acomplish a good final image
