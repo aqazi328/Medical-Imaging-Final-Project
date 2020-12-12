@@ -8,8 +8,8 @@ import cv2
 ##
 
 def cartesianPattern(mask_size, percent):
-    mask = mask_size
-
+    num_lines = mask_size[1] * percent      # I think mask_size[1] is the pixel height
+    mask = None
     return mask
 
 
