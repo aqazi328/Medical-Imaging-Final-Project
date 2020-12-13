@@ -1,15 +1,22 @@
-import numpy as np
-import cv2
-
 
 ##
 # Objective: Simulate different types of acquisition patterns by implementing the
 # following functions.
 ##
 
+import numpy as np
+import cv2
+
+
+
 def cartesianPattern(mask_size, percent):
-    num_lines = mask_size[1] * percent      # I think mask_size[1] is the pixel height
-    mask = None
+    row, col = mask_size
+    mask = np.zeros(mask_size)
+    new_percent = percent * row
+    line_spacing = int(row/new_percent)
+    for x in range(row):
+        if (x % line_spacing == 0):
+            mask[x, :] = 1
     return mask
 
 
