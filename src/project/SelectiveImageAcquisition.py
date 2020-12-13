@@ -21,7 +21,7 @@ def cartesianPattern(mask_size, percent):
 
 def circlePattern(mask_size, radius):
     row, col = mask_size
-    maks = np.zeros(mask_size)
+    mask = np.zeros(mask_size)
     center = int(row/2), int(col/2)
     Y, X = np.ogrid[:row, :col]
     dist_from_center = np.sqrt((X - center[0])**2 + (Y - center[1])**2)
@@ -30,11 +30,17 @@ def circlePattern(mask_size, radius):
 
 
 def ellipsePattern(mask_size, major_axis, minor_axis, angle):
-    mask = None
+    row, col = mask_size
+    mask = np.zeros(mask_size)
+    center = int(row/2), int(col/2)
+    mask = cv2.ellipse(mask, center, axes=(major_axis, minor_axis), angle=angle, startAngle=0, endAngle=360, color=1, thickness=-1)
+
     return mask
 
 
 def bandPattern(mask_size, width, length, angle):
+    row, col = mask_size
+    mask = np.zeros(mask_size)
     mask = None
     return mask
 
