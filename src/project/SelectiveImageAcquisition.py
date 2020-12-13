@@ -8,7 +8,6 @@ import numpy as np
 import cv2
 
 
-
 def cartesianPattern(mask_size, percent):
     row, col = mask_size
     mask = np.zeros(mask_size)
@@ -21,7 +20,12 @@ def cartesianPattern(mask_size, percent):
 
 
 def circlePattern(mask_size, radius):
-    mask = None
+    row, col = mask_size
+    maks = np.zeros(mask_size)
+    center = int(row/2), int(col/2)
+    Y, X = np.ogrid[:row, :col]
+    dist_from_center = np.sqrt((X - center[0])**2 + (Y - center[1])**2)
+    mask = dist_from_center <= radius
     return mask
 
 

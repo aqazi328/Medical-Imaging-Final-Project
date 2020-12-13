@@ -58,7 +58,8 @@ def getDFT(image):
 
 # Convert from fft matrix to an image"
 def getImage(dft_img):
-    img_back = np.fft.fft2(dft_img)
+    inverse_img = np.fft.ifftshift(dft_img)
+    img_back = np.fft.fft2(inverse_img)
     return img_back
 
 # Both input values must be raw values"

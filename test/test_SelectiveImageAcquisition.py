@@ -19,12 +19,6 @@ class SelectiveImageAcquisitionTests(unittest.TestCase):
 
     def test_cartesian_pattern_5_percent(self):
         expected = self.setup.getExpectedOutputMatrix(self._testMethodName)
-        counter = 0
-        for y in range(0, len(expected)):
-            if expected[y, 0] == 1:
-                counter = counter + 1
-                print(y)
-        print(str(counter) + " lines with 1's in basic")
         self.actual = aqc.cartesianPattern(self.mask_size, 0.05)
         self.assertTrue(self.setup.matrixEqual(expected, self.actual))
 
@@ -45,6 +39,7 @@ class SelectiveImageAcquisitionTests(unittest.TestCase):
 
     def test_circle_acquisition_pattern_when_radius_is_small(self):
         expected = self.setup.getExpectedOutputMatrix(self._testMethodName)
+
         self.actual = aqc.circlePattern(self.mask_size, 100)
         self.assertTrue(self.setup.matrixEqual(expected, self.actual))
 
