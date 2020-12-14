@@ -95,13 +95,7 @@ class SelectiveImageAcquisitionTests(unittest.TestCase):
 
     def test_band_acquisition_pattern_invalid_negative_width(self):
         expected = self.setup.getExpectedOutputMatrix(self._testMethodName)
-        counter = 0
-        for y in range(0, len(expected)):
-            if(expected[y, 0] == 1):
-                counter += 1
-                print(y)
-        print(str(counter) + " Number of 1's")
-        self.actual = aqc.bandPattern(self.mask_size, -5, 1000, 0)
+        self.actual = aqc.bandPattern(self.mask_size, -4, 1000, 0)
         self.assertTrue(self.setup.matrixEqual(expected, self.actual))
 
     def test_band_acquisition_pattern_width_larger_than_image(self):

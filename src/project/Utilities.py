@@ -26,7 +26,7 @@ def saveMatrix(filename, matrix):
 
 # map input image to values from 0 to 255"
 def normalizeImage(image):
-    normalized = np.zeros((800, 800))       # not sure if we have to do this or not
+    normalized = np.zeros((image.shape[0], image.shape[1]))       # not sure if we have to do this or not
     normalized = cv2.normalize(image, normalized, 0, 255, cv2.NORM_MINMAX)
     return normalized
 
@@ -34,11 +34,12 @@ def normalizeImage(image):
 # Remember: the DFT its a decomposition of signals
 #  To be able to save it as an image you must convert it.
 def writableDFT(dft_image):
-    # converted = None
-    f = np.fft.fft2(dft_image)
-    converted = np.fft.fftshift(f)      # do this to bring to center and make image easier to see
+    converted = np.fft.ifftshift(dft_image)
+    f = np.fft.ifft2(converted)
+    image_back = np.abs(f)
+    # do this to bring to center and make image easier to see
     # converted = cv2.dft(np.float32(dft_image), flags=cv2.DFT_COMPLEX_OUTPUT)  # its either that^ or this
-    return converted
+    return image_back
 
 
 # Use openCV to display your image"
@@ -58,7 +59,7 @@ def getDFT(image):
 # Convert from fft matrix to an image"
 def getImage(dft_img):
     inverse_img = np.fft.ifftshift(dft_img)
-    img_back = np.fft.fft2(inverse_img)
+    img_back = np.fft.ifft2(inverse_img)
     return img_back
 
 # Both input values must be raw values"

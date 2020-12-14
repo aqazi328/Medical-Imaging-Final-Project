@@ -52,7 +52,6 @@ class Utilities(unittest.TestCase):
     def test_getImage_from_noisy_dft(self):
         expected = self.setup.getExpectedOutput(self._testMethodName)
         input = self.setup.getInputMatrix('noisy_dft.npy')
-
         self.actual = util.getImage(input)
         self.assertTrue(self.setup.imagesEqual(expected, self.actual))
 
