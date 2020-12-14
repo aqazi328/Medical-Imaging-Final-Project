@@ -26,7 +26,6 @@ def saveMatrix(filename, matrix):
 
 # map input image to values from 0 to 255"
 def normalizeImage(image):
-    # normalized = None
     normalized = np.zeros((800, 800))       # not sure if we have to do this or not
     normalized = cv2.normalize(image, normalized, 0, 255, cv2.NORM_MINMAX)
     return normalized

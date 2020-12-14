@@ -41,7 +41,13 @@ def ellipsePattern(mask_size, major_axis, minor_axis, angle):
 def bandPattern(mask_size, width, length, angle):
     row, col = mask_size
     mask = np.zeros(mask_size)
-    mask = None
+
+    #Center of image
+    center = int(row/2), int(col/2)
+    #start and end points
+    start_point = int(center[0] + length/2), int(center[0] - width/2)
+    end_point = int(center[0] - length/2), int(center[0] + width/2)
+    mask = cv2.rectangle(mask, end_point, start_point, color=1, thickness=-1)
     return mask
 
 
