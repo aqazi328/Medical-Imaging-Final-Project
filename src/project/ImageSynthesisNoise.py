@@ -66,7 +66,7 @@ def butterworthLowpassFilter(emptymask, cutoff, order):
 
 
 def butterworthHighpassFilter(emptymask, cutoff, order):
-    bwHP_mask = butterworthLowpassFilter(emptymask, cutoff)
+    bwHP_mask = butterworthLowpassFilter(emptymask, cutoff, order)
     bwHP_mask = 255 - bwHP_mask
     mask = bwHP_mask
 

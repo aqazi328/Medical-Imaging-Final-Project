@@ -10,7 +10,7 @@ def loadImage(image_path):
 
 def loadMatrix(filename):
     # matrix = None
-    matrix = np.loadtxt(filename)
+    matrix = np.load(filename)
     return matrix
 
 
@@ -59,7 +59,8 @@ def getDFT(image):
 # Convert from fft matrix to an image"
 def getImage(dft_img):
     inverse_img = np.fft.ifftshift(dft_img)
-    img_back = np.fft.ifft2(inverse_img)
+    f = np.fft.ifft2(inverse_img)
+    img_back = np.abs(f)
     return img_back
 
 # Both input values must be raw values"

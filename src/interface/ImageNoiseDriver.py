@@ -1,114 +1,85 @@
 # Use this file as you wish to generate the images needed to answer the report
 
-import numpy as np
-import cv2
-import math
+import src.project.Utilities as util
+import src.project.ImageSynthesisNoise as isn
 
 
-def radialPattern(mask_size, ray_count):
-    row, col = mask_size
-    mask = np.zeros(mask_size)
-    ang = 180 / ray_count
-    cx = int(row / 2)
-    cy = int(col / 2)
+heart = "images/cardiac.jpg"
+brain = "images/brain.png"
+matrix = "images/noisyimage.npy"
 
-    px = row / 2
-    py = 0
-    dx = -row / 2
-    dy = 0
+##############  Utilities   ###################
+img = util.loadImage(heart)
+img2 = util.loadImage(brain)
+img3 = util.loadMatrix(matrix)
+# util.displayImage(img)
+# util.displayImage(img2)
+#util.displayImage(img)
+h = img.shape[0]
+w = img.shape[1]
+h1 = img2.shape[0]
+w1 = img2.shape[1]
 
-    for i in range(ray_count):
-        angle = ang*i
-        s = np.sin(-angle * math.pi / 180)
-        c = np.cos(-angle * math.pi / 180)
-        x1 = (px * c - py * s) + cx
-        y1 = (px * s + py * c) + cy
-        x2 = (dx * c - dy * s) + cx
-        y2 = (dx * s + dy * c) + cy
-        p1 = (int(x1), int(y1))
-        p2 = (int(x2), int(y2))
-        cv2.line(mask, p1, p2, 1)
+w2 = img3.shape[1]
+h2 = img3.shape[0]
 
-    cv2.imshow('image', mask)
-    cv2.waitKey(0)
-    return mask
+print(h2)
+print(w2)
 
-masking = (1000,1000)
-rays = 10
+mask_size = (h, w)
+mask_size2 = (h1, w1)
 
-print(radialPattern(masking, rays))
+#img_copy = util.getDFT(img2)
 
-#def radialPattern(mask_size, ray_count):
-# def bandPattern(mask_size, width, length, angle):
-#     mask = None
+#############  Part 6   ####################
+# cutout = (10, 20, 35, 65)
+# order = 1
 #
-#     row, col = mask_size
-#     mask = np.zeros(mask_size)
-#     ang = -angle*math.pi/180
-#     s = np.sin(ang)
-#     c = np.cos(ang)
+# img_copy = util.getDFT(img2)
 #
-#     #Center of image
-#     center = int(row/2), int(col/2)
-#     cx = int(row/2)
-#     cy = int(col/2)
-#     w = abs(width)
-#     l = length
-#
-#     tl_x = (0-l / 2)
-#     tl_y = (0-w / 2)
-#     ntl_x = (tl_x * c - tl_y * s) + cy
-#     ntl_y = (tl_x * s + tl_y * c) + cx
-#
-#     tr_x = (0 + l / 2)
-#     tr_y = (0 - w / 2)
-#     ntr_x = (tr_x * c - tr_y * s) + cy
-#     ntr_y = (tr_x * s + tr_y * c) + cx
-#
-#     bl_x = (0 - l / 2)
-#     bl_y = (0 + w / 2)
-#     nbl_x = (bl_x * c - bl_y * s) + cy
-#     nbl_y = (bl_x * s + bl_y * c) + cx
-#
-#     br_x = (0 + l / 2)
-#     br_y = (0 + w / 2)
-#     nbr_x = (br_x * c - br_y * s) + cy
-#     nbr_y = (br_x * s + br_y * c) + cx
-#
-#     contours = np.array([[int(ntl_x), int(ntl_y)], [int(ntr_x), int(ntr_y)], [int(nbr_x), int(nbr_y)], [int(nbl_x), int(nbl_y)]])
-#     cv2.fillPoly(mask, pts=[contours], color=1)
-#
-#     counter = 0
-#     for y in range(0, len(mask)):
-#         if (mask[y, 0] == 1):
-#             counter += 1
-#             print(y)
-#     print(str(counter) + " Number of 1's")
-#
-#     cv2.imshow('image', mask)
-#     cv2.waitKey(0)
-#     return mask
-#
-# masking = (1000,1000)
-# w = 10
-# l = 500
-# a = 10
-#
-#
-# print(bandPattern(masking, w, l, a))
+# count = 0
+# for cut in cutout:
+#     print(cut)
+#     mask = isn.butterworthLowpassFilter(mask_size2, cut, 4)
+#     a = util.applyMask(img_copy, mask)
+#     b = util.writableDFT(a)
+#     c = util.normalizeImage(b)
+#     d = util.post_process_image(c)
+#     count += 1
+#     print(count)
+#     util.displayImage(d)
 
-# if(angle > 0):
-#         rotated_x = int(math.cos(angle) * (x - center[0]) - math.sin(angle) * (y - center[1]) + center[1])
-#         rotated_y = int(math.sin(angle) * (x - center[0]) + math.cos(angle) * (y - center[1]) + center[1])
-#         new_startP = (rotated_x, rotated_y)
-#
-#         rotated_x2 = int(math.cos(angle) * (x2 - center[0]) - math.sin(angle) * (y2 - center[1]) + center[1])
-#         rotated_y2 = int(math.sin(angle) * (x2 - center[0]) + math.cos(angle) * (y2 - center[1]) + center[1])
-#         new_endP = (rotated_x2, rotated_y2)
-#
-#     # if(angle > 0):
-#     #     start_point = int((start_point[1] - center[0]) * math.cos(angle) + (start_point[0] - center[0]) * math.sin(angle) + center[0]), int((start_point[1] - center[1]) * math.sin(angle) - (start_point[0] - center[1]) *math.cos(angle) + center[1])
-#     #     end_point = int((end_point[1] - center[0]) * math.cos(angle) + (end_point[0] - center[0]) * math.sin(angle) + center[0]), int((end_point[1] - center[1]) * math.sin(angle) - (end_point[0] - center[1]) *math.cos(angle) + center[1])
-#     #     print(start_point)
-#     #     print(end_point)
-#     #mask = cv2.line(mask, new_startP, new_endP, color=1)
+###########   Part 7   ######################
+# print(w1)
+# print(h1)
+# cutout = (250, 200, 150, 100)
+# count = 0
+# for cut in cutout:
+#     print(cut)
+#     mask = isn.gaussianHighpassFilter(mask_size2, cut)
+#     a = util.applyMask(img_copy, mask)
+#     b = util.writableDFT(a)
+#     c = util.normalizeImage(b)
+#     d = util.post_process_image(c)
+#     count += 1
+#     print(count)
+#     util.displayImage(d)
+
+nmask_size = (h2, w2)
+
+img_copy = util.getImage(img3)
+
+mask = isn.idealHighpassFilter(nmask_size, 100)
+mask1 = isn.idealLowpassFilter(nmask_size, 100)
+mask2 = isn.gaussianHighpassFilter(nmask_size, 100)
+mask3 = isn.ringLowpassFilter(nmask_size, 100, 10)
+mask4 = isn.butterworthHighpassFilter(nmask_size, 50, 2)
+
+masks = (mask, mask1, mask2, mask3, mask4)
+
+count = 0
+for mask in masks:
+    a = util.applyMask(mask, img_copy)
+    count += 1
+    print(count)
+    util.displayImage(a)
