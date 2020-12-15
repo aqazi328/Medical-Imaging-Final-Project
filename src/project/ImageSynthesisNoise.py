@@ -1,93 +1,109 @@
 import numpy as np
 import cv2
 import signal
-import psychopy
-from scipy.signal import butter, lfilter
-from PIL import Image, ImageFilter
-from scipy import fftpack
-import imageio
-from PIL import Image, ImageDraw
 
 def idealLowpassFilter(emptymask, cutoff):
-    # kernel = np.ones((cutoff, cutoff), np.float32) / cutoff*cutoff
-    # mask = cv2.filter2D(emptymask, 0, kernel)
+    row, col = emptymask
+    xrow, ycol = row/2, col/2
+    lp_mask = np.zeros((row, col), np.float64)
 
-    # mask = cv2.boxFilter(emptymask, 0, (cutoff, cutoff))
+    for i in range(lp_mask.shape[0]):
+        for k in range(lp_mask.shape[1]):
+            pt = np.sqrt((np.square(i - xrow)) + np.square(k - ycol))
+            if pt <= cutoff:
+                lp_mask[i][k] = 255
+            else:
+                lp_mask[i][k] = 0
 
-    # mask = cv2.blur(emptymask, (cutoff,cutoff))
+    mask = lp_mask
 
-    # mask = emptymask.filter(ImageFilter.MinFilter(cutoff))
-
-    # image = cv2.cvtColor(emptymask, cv2.COLOR_BGR2GRAY)
-    # mask = cv2.blur(image, (cutoff, cutoff))
-
-    # dft = cv2.dft(np.float32(emptymask), flags=cv2.DFT_COMPLEX_OUTPUT)
-    # dft_shift = np.fft.fftshift(dft)
-    # mask = 20 * np.log(cv2.magnitude(dft_shift[:, :, cutoff], dft_shift[:, :, cutoff]))
-
-    # mask = cv2.magnitude(emptymask[:, :, cutoff], emptymask[:, :, cutoff])
-
-    mask = None
     return mask
 
 
 def idealHighpassFilter(emptymask, cutoff):
-    # mask = emptymask.filter(ImageFilter.BLUR)
+    hp_mask = idealLowpassFilter(emptymask, cutoff)
+    hp_mask = 255 - hp_mask
+    mask = hp_mask
 
-    mask = emptymask.filter(ImageFilter.MaxFilter(cutoff))
-
-    # mask = None
     return mask
 
 
 def gaussianLowpassFilter(emptymask, cutoff):
-    image = cv2.cvtColor(emptymask, cv2.COLOR_BGR2GRAY)
-    mask = cv2.GaussianBlur(image, (cutoff, cutoff), 0)
+    row, col = emptymask
+    xrow, ycol = row/2, col/2
+    gausLP_mask = np.zeros(emptymask)
+
+    for i in range(row):
+        for k in range(col):
+            pt = np.sqrt(((i - xrow) * (i - ycol)) + ((k - ycol) * (k - ycol)))
+            gausLP_mask[i][k] = np.exp((-1 * np.power(pt, 2)) / (2 * cutoff * cutoff))
+
+    mask = gausLP_mask
     return mask
 
 
 def gaussianHighpassFilter(emptymask, cutoff):
-    # mask = cv2.GaussianBlur(emptymask, (3,3), cutoff, borderType=cv2.BORDER_CONSTANT)
+    gausHL_mask = gaussianLowpassFilter(emptymask, cutoff)
+    gausHL_mask = 255 - gausHL_mask
+    mask = gausHL_mask
 
-    # mask = cv2.GaussianBlur(emptymask, (1, 1), cutoff)
-    mask = cv2.GaussianBlur(emptymask, (cutoff, cutoff), 0)
-
-    # mask = None
     return mask
 
 
 def butterworthLowpassFilter(emptymask, cutoff, order):
+    row, col = emptymask
+    xrow, ycol = row/2, col/2
+    bwLP_mask = np.zeros(emptymask)
 
+    for i in range(row):
+        for k in range(col):
+            pt = np.sqrt(np.power((i - xrow), 2) + np.power((k - ycol), 2))
+            bwLP_mask[i][k] = 1/(1 + np.power((pt/cutoff), (2 * order)))
 
-    # mask = psychopy.filters.butter2d_lp(emptymask, cutoff, order)
+    mask = bwLP_mask
 
-    # mask = scipy.signal.butter(emptymask, cutoff, order)
-
-    nyq = 0.5 * 30          # I'm assuming 30 hz?
-    normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    mask = lfilter(b, a, emptymask)
-
-    # mask = None
     return mask
 
 
 def butterworthHighpassFilter(emptymask, cutoff, order):
+    bwHP_mask = butterworthLowpassFilter(emptymask, cutoff)
+    bwHP_mask = 255 - bwHP_mask
+    mask = bwHP_mask
 
-    # b, a = signal.butter(order, cutoff, btype='high', analog=False)
-    # mask = signal.filtfilt(b, a, emptymask)
-
-    mask = signal.butter(order, emptymask, 'low', analog=True)
-
-    # mask = None
     return mask
 
 
 def ringLowpassFilter(emptymask, cutoff, thickness):
-    mask = None
+    row, col = emptymask
+    xrow, ycol = row/2, col/2
+    rLP_mask = np.zeros(emptymask)
+
+    for i in range(rLP_mask.shape[0]):
+        for k in range(rLP_mask.shape[1]):
+            pt = np.sqrt((np.square(i - xrow)) + np.square(k - ycol))
+            if (pt <= cutoff+thickness) and (pt > (cutoff-thickness)):
+                rLP_mask[i][k] = 255
+            else:
+                rLP_mask[i][k] = 0
+
+    mask = rLP_mask
+
     return mask
 
 
 def ringHighpassFilter(emptymask, cutoff, thickness):
-    mask = None
+    row, col = emptymask
+    xrow, ycol = row/2, col/2
+    rHP_mask = np.zeros(emptymask)
+
+    for i in range(rHP_mask.shape[0]):
+        for k in range(rHP_mask.shape[1]):
+            pt = np.sqrt((np.square(i - xrow)) + np.square(k - ycol))
+            if (pt > cutoff + thickness) and (pt <= (cutoff - thickness)):
+                rHP_mask[i][k] = 0
+            else:
+                rHP_mask[i][k] = 255
+
+    mask = rHP_mask
+
     return mask
