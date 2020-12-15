@@ -47,8 +47,6 @@ def bandPattern(mask_size, width, length, angle):
     s = np.sin(ang)
     c = np.cos(ang)
 
-    #Center of image
-    center = int(row/2), int(col/2)
     cx = int(row/2)
     cy = int(col/2)
     w = width
@@ -81,7 +79,29 @@ def bandPattern(mask_size, width, length, angle):
 
 
 def radialPattern(mask_size, ray_count):
-    mask = None
+    row, col = mask_size
+    mask = np.zeros(mask_size)
+    ang = 180 / ray_count
+    cx = int(row / 2)
+    cy = int(col / 2)
+
+    px = row / 2
+    py = 0
+    dx = -row / 2
+    dy = 0
+
+    for i in range(ray_count):
+        angle = ang*i
+        s = np.sin(-angle * math.pi / 180)
+        c = np.cos(-angle * math.pi / 180)
+        x1 = (px * c - py * s) + cx
+        y1 = (px * s + py * c) + cy
+        x2 = (dx * c - dy * s) + cx
+        y2 = (dx * s + dy * c) + cy
+        p1 = (int(x1), int(y1))
+        p2 = (int(x2), int(y2))
+        cv2.line(mask, p1, p2, 1)
+
     return mask
 
 

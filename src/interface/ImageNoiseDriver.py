@@ -4,64 +4,98 @@ import numpy as np
 import cv2
 import math
 
-#def radialPattern(mask_size, ray_count):
-def bandPattern(mask_size, width, length, angle):
-    mask = None
 
+def radialPattern(mask_size, ray_count):
     row, col = mask_size
     mask = np.zeros(mask_size)
-    ang = -angle*math.pi/180
-    s = np.sin(ang)
-    c = np.cos(ang)
+    ang = 180 / ray_count
+    cx = int(row / 2)
+    cy = int(col / 2)
 
-    #Center of image
-    center = int(row/2), int(col/2)
-    cx = int(row/2)
-    cy = int(col/2)
-    w = abs(width)
-    l = length
+    px = row / 2
+    py = 0
+    dx = -row / 2
+    dy = 0
 
-    tl_x = (0-l / 2)
-    tl_y = (0-w / 2)
-    ntl_x = (tl_x * c - tl_y * s) + cy
-    ntl_y = (tl_x * s + tl_y * c) + cx
-
-    tr_x = (0 + l / 2)
-    tr_y = (0 - w / 2)
-    ntr_x = (tr_x * c - tr_y * s) + cy
-    ntr_y = (tr_x * s + tr_y * c) + cx
-
-    bl_x = (0 - l / 2)
-    bl_y = (0 + w / 2)
-    nbl_x = (bl_x * c - bl_y * s) + cy
-    nbl_y = (bl_x * s + bl_y * c) + cx
-
-    br_x = (0 + l / 2)
-    br_y = (0 + w / 2)
-    nbr_x = (br_x * c - br_y * s) + cy
-    nbr_y = (br_x * s + br_y * c) + cx
-
-    contours = np.array([[int(ntl_x), int(ntl_y)], [int(ntr_x), int(ntr_y)], [int(nbr_x), int(nbr_y)], [int(nbl_x), int(nbl_y)]])
-    cv2.fillPoly(mask, pts=[contours], color=1)
-
-    counter = 0
-    for y in range(0, len(mask)):
-        if (mask[y, 0] == 1):
-            counter += 1
-            print(y)
-    print(str(counter) + " Number of 1's")
+    for i in range(ray_count):
+        angle = ang*i
+        s = np.sin(-angle * math.pi / 180)
+        c = np.cos(-angle * math.pi / 180)
+        x1 = (px * c - py * s) + cx
+        y1 = (px * s + py * c) + cy
+        x2 = (dx * c - dy * s) + cx
+        y2 = (dx * s + dy * c) + cy
+        p1 = (int(x1), int(y1))
+        p2 = (int(x2), int(y2))
+        cv2.line(mask, p1, p2, 1)
 
     cv2.imshow('image', mask)
     cv2.waitKey(0)
     return mask
 
 masking = (1000,1000)
-w = 10
-l = 500
-a = 10
+rays = 10
 
+print(radialPattern(masking, rays))
 
-print(bandPattern(masking, w, l, a))
+#def radialPattern(mask_size, ray_count):
+# def bandPattern(mask_size, width, length, angle):
+#     mask = None
+#
+#     row, col = mask_size
+#     mask = np.zeros(mask_size)
+#     ang = -angle*math.pi/180
+#     s = np.sin(ang)
+#     c = np.cos(ang)
+#
+#     #Center of image
+#     center = int(row/2), int(col/2)
+#     cx = int(row/2)
+#     cy = int(col/2)
+#     w = abs(width)
+#     l = length
+#
+#     tl_x = (0-l / 2)
+#     tl_y = (0-w / 2)
+#     ntl_x = (tl_x * c - tl_y * s) + cy
+#     ntl_y = (tl_x * s + tl_y * c) + cx
+#
+#     tr_x = (0 + l / 2)
+#     tr_y = (0 - w / 2)
+#     ntr_x = (tr_x * c - tr_y * s) + cy
+#     ntr_y = (tr_x * s + tr_y * c) + cx
+#
+#     bl_x = (0 - l / 2)
+#     bl_y = (0 + w / 2)
+#     nbl_x = (bl_x * c - bl_y * s) + cy
+#     nbl_y = (bl_x * s + bl_y * c) + cx
+#
+#     br_x = (0 + l / 2)
+#     br_y = (0 + w / 2)
+#     nbr_x = (br_x * c - br_y * s) + cy
+#     nbr_y = (br_x * s + br_y * c) + cx
+#
+#     contours = np.array([[int(ntl_x), int(ntl_y)], [int(ntr_x), int(ntr_y)], [int(nbr_x), int(nbr_y)], [int(nbl_x), int(nbl_y)]])
+#     cv2.fillPoly(mask, pts=[contours], color=1)
+#
+#     counter = 0
+#     for y in range(0, len(mask)):
+#         if (mask[y, 0] == 1):
+#             counter += 1
+#             print(y)
+#     print(str(counter) + " Number of 1's")
+#
+#     cv2.imshow('image', mask)
+#     cv2.waitKey(0)
+#     return mask
+#
+# masking = (1000,1000)
+# w = 10
+# l = 500
+# a = 10
+#
+#
+# print(bandPattern(masking, w, l, a))
 
 # if(angle > 0):
 #         rotated_x = int(math.cos(angle) * (x - center[0]) - math.sin(angle) * (y - center[1]) + center[1])
